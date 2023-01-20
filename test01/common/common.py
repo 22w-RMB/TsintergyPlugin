@@ -33,13 +33,13 @@ def readYaml(yamlFilePath):
 
     return data
 
-def mkDir(root, *args):
+def mkDir(root, *args,isGetStr=False):
 
     for i in args:
         root = os.path.join(root, i)
-
-        if not os.path.exists(root):
-            os.mkdir(root)
+        if isGetStr == False:
+            if not os.path.exists(root):
+                os.mkdir(root)
 
     return root
 
@@ -115,5 +115,6 @@ if __name__ == '__main__':
 
 
     print(rootPath)
+
 
     pass
