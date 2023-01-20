@@ -1,11 +1,15 @@
 from test01.common.common import *
+from test01.common.excel_helper import ExcelHepler
 
 province = "蒙西"
+yamlFilePath = os.path.join(rootPath, "yamlFile", "mx_interface.yaml")
 publictemplatePath = os.path.join(rootPath, "template", province, "公有数据")
 privatetemplatePath = os.path.join(rootPath, "template", province, "私有数据")
 savePath = mkDir(rootPath, "save")
 publicSavePath = mkDir(savePath, province, "公有数据")
 privateSavePath = mkDir(savePath, province, "私有数据")
+
+
 
 # 接口请求所有的公有数据
 def getPublicData(session1 : requests.Session, requestInfo, startDate, endDate, provinceAreaId="015",dataLen="LEN_96"):
@@ -34,9 +38,9 @@ def outPublicData(data, startDate, endDate, boardName, dayAheadName, realName, t
 
     openFilePath :str
     if isPrice:
-        openFilePath = os.path.join(publictemplatePath,"预测",templateName)
-    else:
         openFilePath = os.path.join(publictemplatePath,"价格",templateName)
+    else:
+        openFilePath = os.path.join(publictemplatePath,"预测",templateName)
 
     sd = datetime.datetime.strptime(startDate,"%Y-%m-%d")
     ed = datetime.datetime.strptime(endDate,"%Y-%m-%d")
@@ -200,7 +204,7 @@ def outPrivateData(data, startDate, endDate):
 
 def execPublic(session, yamlData, startDate, endDate):
 
-    mkPublicDir(startDate, endDate)
+    mkPublicDir(publicSavePath,startDate, endDate)
 
     responseData = getPublicData(session, yamlData['publicData'], startDate, endDate)
 
@@ -222,7 +226,7 @@ def execPrivate(session, yamlData, startDate, endDate):
     unitInfo = getUnitId(session, yamlData['privateData'])
 
     # 创建文件夹
-    mkPrivateDir(unitInfo,startDate, endDate)
+    mkPrivateDir(privateSavePath,unitInfo,startDate, endDate)
 
     unitData = getPrivateData(session, yamlData['privateData'], startDate, endDate ,unitInfo)
     outPrivateData(unitData,startDate,endDate)
@@ -230,7 +234,7 @@ def execPrivate(session, yamlData, startDate, endDate):
 def beginCrawl(startDate,endDate,type):
 
     session = requests.Session()
-    yamlData = readYaml()
+    yamlData = readYaml(yamlFilePath)
     login(session,yamlData['login'])
 
 
@@ -258,4 +262,4 @@ def beginCrawl(startDate,endDate,type):
 
 
 if __name__ == '__main__':
-    beginCrawl('2022-12-01','2022-12-02',2)
+    beginCrawl('2022-12-01','2022-12-01',1)

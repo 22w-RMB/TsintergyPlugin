@@ -1,6 +1,6 @@
 import json
 
-from test01.common.common import *
+from test01.provinces.mx.public_private_date import *
 import requests
 
 
@@ -56,7 +56,7 @@ def predictImport(session,predictInfo,startDate, endDate):
         for i in dataFileName:
             filePathList.append(
                 ("files", (dateStr2 + i,
-                       open(os.path.join(publicPath, dateStr1, dateStr2 + i), "rb"))
+                       open(os.path.join(publicSavePath, dateStr1, dateStr2 + i), "rb"))
                  )
             )
 
@@ -116,7 +116,7 @@ def realImport(session, realInfo, startDate, endDate):
         for i in dataFileName:
             filePathList.append(
                 ("files", (dateStr2 + i,
-                       open(os.path.join(publicPath, dateStr1, dateStr2 + i), "rb")
+                       open(os.path.join(publicSavePath, dateStr1, dateStr2 + i), "rb")
                            )
                  )
             )
@@ -167,7 +167,7 @@ def priceImport(session, priceInfo, startDate, endDate):
             ("type", (None, "PUBLIC")),
             ("dataType", (None, "PRICE_DATA")),
             ("files", (filename,
-                       open(os.path.join(publicPath, dateStr1, filename), "rb")
+                       open(os.path.join(publicSavePath, dateStr1, filename), "rb")
                            )
              )
         ]
@@ -184,7 +184,7 @@ def priceImport(session, priceInfo, startDate, endDate):
 def beginImport(startDate,endDate):
 
     s = requests.Session()
-    yamlData = readYaml()
+    yamlData = readYaml(yamlFilePath)
 
     login(s, loginInfo=yamlData['importInfo']['login'])
     predictImport(s,yamlData['importInfo'],startDate,endDate)
@@ -195,4 +195,4 @@ def beginImport(startDate,endDate):
 
 if __name__ == '__main__':
     print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    beginImport('2022-12-01','2022-12-02')
+    beginImport('2022-12-01','2022-12-01')

@@ -7,8 +7,6 @@ from Crypto.PublicKey import RSA
 import requests
 import os
 import datetime
-from  excel_helper import ExcelHepler
-
 
 
 
@@ -29,11 +27,8 @@ def encrpt(s , key):
 # 读取yaml文件
 def readYaml(yamlFilePath):
 
-    path = os.path.join(rootPath, "../yamlFile/mx_interface.yaml")
-    print(path)
-
     data : dict
-    with open(path,'r',encoding="utf-8") as f:
+    with open(yamlFilePath,'r',encoding="utf-8") as f:
         data =  yaml.safe_load(f)
 
     return data
@@ -77,12 +72,12 @@ def mkPrivateDir(privateSavePath,unitData,startDate, endDate):
 
 
 
-def saveFile(openFilePath, colList, dataList, saveFilePath ):
-    e = ExcelHepler(openFilePath)
-    e.writeColData(sheetName="Sheet1",colList=colList,dataList=dataList)
-    e.saveFile(saveFilePath)
-    e.close()
-
+# def saveFile(openFilePath, colList, dataList, saveFilePath ):
+#     e = ExcelHepler(openFilePath)
+#     e.writeColData(sheetName="Sheet1",colList=colList,dataList=dataList)
+#     e.saveFile(saveFilePath)
+#     e.close()
+#
 
 
 def login(session1 : requests.Session, loginInfo):
@@ -119,6 +114,6 @@ rootPath = os.path.dirname(os.path.dirname(__file__))
 if __name__ == '__main__':
 
 
-
+    print(rootPath)
 
     pass
