@@ -220,7 +220,7 @@ publicConfig = [
         'templateName': '日前边际分区价格' ,
         'savePath':  ['公有数据','价格'],
         'saveFileName': '日前边际分区价格' ,
-        'colList':  [3,4],
+        'colList':  [2,3],
         'beginRowList': [2,2] ,
         'typeInfo': [
             {"board":['areaPrice'] ,"node": ['daAreaSouthPrice'] },
@@ -232,7 +232,7 @@ publicConfig = [
         'templateName': '实时边际分区价格' ,
         'savePath':  ['公有数据','价格'],
         'saveFileName': '实时边际分区价格' ,
-        'colList':  [3,4],
+        'colList':  [2,3],
         'beginRowList': [2,2] ,
         'typeInfo': [
             {"board":['areaPrice'] ,"node": ['rtAreaSouthPrice'] },

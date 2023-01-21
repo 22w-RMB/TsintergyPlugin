@@ -30,9 +30,9 @@ importInfo:
     username: zhanzw
     password: passwd123@
     loginMode: 2
-  predictDataUrl: https://adssx-test-gzdevops3.tsintergy.com/datacenter/mx/api/data/import/create/multi
-  realDataUrl: https://adssx-test-gzdevops3.tsintergy.com/datacenter/mx/api/data/import/create/multi
-  priceDataUrl: https://adssx-test-gzdevops3.tsintergy.com/datacenter/mx/api/data/import/create/multi
+  predictDataUrl: https://adssx-test-gzdevops3.tsintergy.com/datacenter/js/api/data/import/create/multi
+  realDataUrl: https://adssx-test-gzdevops3.tsintergy.com/datacenter/js/api/data/import/create/multi
+  priceDataUrl: https://adssx-test-gzdevops3.tsintergy.com/datacenter/js/api/data/import/create/multi
 
 
 

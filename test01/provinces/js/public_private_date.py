@@ -329,8 +329,6 @@ def beginCrawl(startDate,endDate,type):
     yamlData = readYaml(yamlFilePath)
     login(session, yamlData['login'])
 
-    startDate = '2021-02-01'
-    endDate = '2021-02-02'
 
     startTime = datetime.datetime.now()
     print(startDate, endDate, type)
@@ -363,24 +361,16 @@ if __name__ == '__main__':
     # 在数据哪个层级 ，用list存储
     # 保存在第几列，第几行
     # 哪个保存名
-    session = requests.Session()
-    yamlData = readYaml(yamlFilePath)
-    login(session,yamlData['login'])
+
+    # session = requests.Session()
+    # yamlData = readYaml(yamlFilePath)
+    # login(session,yamlData['login'])
 
     startDate = '2022-11-15'
     endDate = '2022-11-15'
-
-    startTime = datetime.datetime.now()
-    print(startDate,endDate,type)
-
-    execPrivate(session, yamlData['privateData'], startDate, endDate)
-
     #
-    #
-    # responseData = getMarketData(session, yamlData['publicData'], startDate, endDate)
-    #
-    #
-    # for i in publicConfig:
-    #     outPublicData(responseData, startDate, endDate, i)
+    # startTime = datetime.datetime.now()
+    # print(startDate,endDate,type)
 
+    beginCrawl(startDate,endDate,1)
 
