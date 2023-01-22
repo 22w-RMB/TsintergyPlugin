@@ -9,12 +9,9 @@ login:
     loginMode: 2
 publicData:
     method: GET
-    url: https://xhxt.chng.com.cn/mxgroup/fire/api/market/analysis/mx/market/info
-    args:
-      - startDate
-      - endDate
-      - provinceAreaId
-      - dataLen
+    marketurl: https://xhxt.chng.com.cn/mxgroup/fire/api/market/analysis/mx/market/info
+    overhaulUrl: https://xhxt.chng.com.cn/mxgroup/fire/api/data/overhaul/info
+
 privateData:
     unitIdUrl: https://xhxt.chng.com.cn/mxgroup/fire/api/org/org/tree
     clearingUrl: https://xhxt.chng.com.cn/mxgroup/fire/api/mx/data/analysis/clearing

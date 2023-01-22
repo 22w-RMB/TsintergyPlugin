@@ -1,27 +1,27 @@
 from test01.common.common import *
 from test01.common.excel_helper import ExcelHepler
+from mxFileConfig import *
 
 province = "蒙西"
+provinceAreaId = "015"
 yamlFilePath = os.path.join(rootPath, "yamlFile", "mx_interface.yaml")
-publictemplatePath = os.path.join(rootPath, "template", province, "公有数据")
-privatetemplatePath = os.path.join(rootPath, "template", province, "私有数据")
+rootTemplatePath = os.path.join(rootPath, "template", province)
 savePath = mkDir(rootPath, "save")
-publicSavePath = mkDir(savePath, province, "公有数据")
-privateSavePath = mkDir(savePath, province, "私有数据")
+rootSavePath = mkDir(savePath, province)
 
 
 
-# 接口请求所有的公有数据
-def getPublicData(session1 : requests.Session, requestInfo, startDate, endDate, provinceAreaId="015",dataLen="LEN_96"):
+# 接口请求市场行情看板的公有数据
+def getMarketData(session1 : requests.Session, requestInfo, startDate, endDate, dataLen="LEN_96"):
+
     ed = datetime.datetime.strptime(endDate, "%Y-%m-%d")
     ed += datetime.timedelta(days=2)
-    date = datetime.datetime.strftime(ed, "%Y-%m-%d")
 
-    url = requestInfo['url']
+    url = requestInfo['marketurl']
     method = requestInfo['method']
     requestsData = {
         "startDate" : startDate,
-        "endDate" : date,
+        "endDate" : ed.strftime("%Y-%m-%d"),
         "provinceAreaId" : provinceAreaId,
         "dataLen" : dataLen,
     }
@@ -31,69 +31,160 @@ def getPublicData(session1 : requests.Session, requestInfo, startDate, endDate, 
     return res.json()['data']
 
 
-# 获取其他公有数据
-def outPublicData(data, startDate, endDate, boardName, dayAheadName, realName, templateName,colList, isPrice):
+# 接口请求设备检修信息
+def getOverhaulData(session1 : requests.Session, requestInfo, startDate, endDate):
 
-    board = data[boardName]
+    url = requestInfo['overhaulUrl']
+    method = requestInfo['method']
 
-    openFilePath :str
-    if isPrice:
-        openFilePath = os.path.join(publictemplatePath,"价格",templateName)
-    else:
-        openFilePath = os.path.join(publictemplatePath,"预测",templateName)
 
     sd = datetime.datetime.strptime(startDate,"%Y-%m-%d")
     ed = datetime.datetime.strptime(endDate,"%Y-%m-%d")
     deviation = (ed-sd).days
 
-    e = ExcelHepler(openFilePath)
+    overhaulList = []
+
+
+
+    for i in range(0, deviation + 1):
+
+        requestsData = {
+            "date": sd.strftime("%Y-%m-%d"),
+            "type": 0 ,
+        }
+        res = session1.request(method=method, url=url, params=requestsData)
+        resData = res.json()['data']['overHaulInfoDOList']
+
+        typeName = {
+            "No": [],
+            "factoryName": [],          # 电厂调度名
+            "deviceName": [],           # 设备调度名
+            "unitCapacity": [],         # 机组容量
+            "overhaulNo": [],            # 检修申请单号
+            "deviceType": [],           # 设备类型
+            "deviceStatus": [],     # 设备状态
+            "statusType": [],       # 状态类型
+            "changeReason": [],     # 状态改变原因
+            "startTime": [],        # 停运或启用开始时间
+            "endTime": [],           # 停运或启用结束时间
+        }
+
+        theNumber = []
+        factoryName = []
+        deviceName = []
+        unitCapacity = []
+        overhaulNo = []
+        deviceType = []
+        deviceStatus = []
+        statusType = []
+        changeReason = []
+        startTime = []
+        endTime = []
+
+        j = 1
+
+        for item in resData:
+
+            typeName['No'].append(j)
+
+            for key in typeName.keys():
+                if key == 'No':
+                    continue
+                typeName[key].append(item[key])
+
+            # factoryName.append(item['factoryName'])
+            # deviceName.append(item['factoryName'])
+            # unitCapacity.append(item['factoryName'])
+            # overhaulNo.append(item['factoryName'])
+            # deviceType.append(item['factoryName'])
+            # deviceStatus.append(item['factoryName'])
+            # statusType.append(item['factoryName'])
+            # changeReason.append(item['factoryName'])
+            # startTime.append(item['factoryName'])
+            # endTime.append(item['factoryName'])
+
+            j += 1
+
+        sd += datetime.timedelta(days=1)
+
+        overhaulList.append(typeName)
+
+    return {"overhaulList":overhaulList}
+
+
+
+# 输出公有数据
+def outPublicData(data, startDate, endDate,  templateInfo):
+
+    templatePath = os.path.join(mkDir(rootTemplatePath,*templateInfo['templatePath'],isGetStr=True),
+                                templateInfo['templateName']+".xlsx")
+
+
+    e = ExcelHepler(templatePath)
+
+
+    sd = datetime.datetime.strptime(startDate,"%Y-%m-%d")
+    ed = datetime.datetime.strptime(endDate,"%Y-%m-%d")
+    deviation = (ed-sd).days
+
+
+
     for i in range(0,deviation+1):
-
-
         dataList = []
 
-        date = datetime.datetime.strftime(sd,"%Y-%m-%d")
-        dd = datetime.datetime.strftime(sd,"%Y%m%d")
+        date = datetime.datetime.strftime(sd, "%Y-%m-%d")
+
+
         print(date)
-        saveFileName = ""
+
+        # d = []
+        # for node in templateInfo['node']:
+        #     d = data['da']
+
+        for info in templateInfo['typeInfo']:
+
+            d = data
+            print(d)
+            if info['board'] is not None:
+                for board in info['board']:
+                    print(board)
+                    d = d[board]
+
+            d = d[ info['whitchDay'] + i]
+
+            for node in info['node']:
+                d = d[node]
+
+            dataList.append(d)
 
 
+        savePath = mkDir(rootSavePath, *templateInfo['savePath'],date)
 
-        if isPrice:
-            # 全网统一出清
-            dataList.append(board[i]['netUnifiedPrice'])
-            # 呼包东出清
-            dataList.append(board[i]['hbdUnifiedPrice'])
-            # 呼包西出清
-            dataList.append(board[i]['hbxUnifiedPrice'])
 
-            # 文件名
-            saveFileName = date + templateName
+        #   日分解及出清结果数据 的文件名格式特别，需要特殊处理
+        if templateInfo['saveFileName'] == '日分解及出清结果数据':
+            date = datetime.datetime.strftime(sd, "%Y-%m-%d")
         else:
-            # D日
-            dataList.append(board[i][dayAheadName])
-            # D+1日
-            dataList.append(board[i + 1][dayAheadName])
-            # D+2日
-            dataList.append(board[i + 2][dayAheadName])
-            # 实时
-            dataList.append(board[i][realName])
+            date = datetime.datetime.strftime(sd,"%Y%m%d")
 
-            #文件名
-            saveFileName = dd + templateName
+        saveFileName = date + templateInfo['saveFileName'] + ".xlsx"
+
+        path = os.path.join(savePath,saveFileName)
 
         sd += datetime.timedelta(days=1)
         print(saveFileName)
-        saveFilePath = os.path.join(publicSavePath, date, saveFileName)
+        print(path)
 
 
-        e.writeColData(sheetName="Sheet1", colList=colList, dataList=dataList)
-        e.saveFile(saveFilePath)
+        e.writeColData(sheetName="Sheet1", colList=templateInfo['colList'],
+                       beginRowList=templateInfo['beginRowList'],dataList=dataList,
+                       savePath=path)
+
     e.close()
 
-        # saveFile(openFilePath,colList,dataList,saveFilePath)
 
 
+# 请求所有的机组
 def getUnitId(session1,privateData):
 
     url = privateData['unitIdUrl']
@@ -133,7 +224,7 @@ def getPrivateData(session1 : requests.Session, requestInfo, startDate, endDate 
             "startDate" : startDate,
             "endDate" : endDate,
             "deviceId" : unit['unitId'],
-            "businessType" : unit['businessType']
+            "businessType" : unit['businessType'],
         }
         res = session1.request(method=method,url = url,params=requestsData)
 
@@ -143,116 +234,114 @@ def getPrivateData(session1 : requests.Session, requestInfo, startDate, endDate 
     return allDataList
 
 # 输出所有的私有数据
-def outPrivateData(data, startDate, endDate):
+def outPrivateData(data, startDate, endDate,  templateInfo):
 
 
-    openFilePath = os.path.join(privatetemplatePath,"省内现货出清结果.xlsx")
-
-    colList = [3,4,5,6,7,8]
-
-    sd = datetime.datetime.strptime(startDate,"%Y-%m-%d")
-    ed = datetime.datetime.strptime(endDate,"%Y-%m-%d")
-    deviation = (ed-sd).days
+    templatePath = os.path.join(mkDir(rootTemplatePath,*templateInfo['templatePath'],isGetStr=True),
+                                templateInfo['templateName']+".xlsx")
 
 
-    e = ExcelHepler(openFilePath)
-
+    e = ExcelHepler(templatePath)
 
 
     for item in data:
         unitName = item[0]
         ownerName = item[2]
         unitData = item[1]
+
         sd = datetime.datetime.strptime(startDate, "%Y-%m-%d")
+        ed = datetime.datetime.strptime(endDate, "%Y-%m-%d")
+        deviation = (ed - sd).days
 
-        for i in range(0,deviation+1):
-
-
+        for i in range(0, deviation + 1):
             dataList = []
 
-            date = datetime.datetime.strftime(sd,"%Y-%m-%d")
-            dd = datetime.datetime.strftime(sd,"%Y%m%d")
-            # print(date)
-            saveFileName = unitName + "-" + "省内现货出清结果" + "-"  + dd +".xlsx"
+            dateStr1 = datetime.datetime.strftime(sd, "%Y-%m-%d")
+            dateStr2 = datetime.datetime.strftime(sd, "%Y%m%d")
+            print(dateStr1)
 
-            print(ownerName,"： " +saveFileName)
+            # d = []
+            # for node in templateInfo['node']:
+            #     d = data['da']
 
+            for info in templateInfo['typeInfo']:
 
-            saveFilePath = os.path.join(privateSavePath, ownerName,date,saveFileName)
+                d = unitData
+                # print(d)
+                if info['board'] is not None:
+                    for board in info['board']:
+                        print(board)
+                        d = d[board]
 
-            # 中长期合同电力
-            dataList.append(unitData[i]["fittingPower"])
-            # 中长期合同电价
-            dataList.append(unitData[i]["fittingPrice"])
-            # 日前出清电力
-            dataList.append(unitData[i]["dayAheadClearingPower"])
-            # 实时出清电力
-            dataList.append(unitData[i]["realTimeClearingPower"])
-            # 实时出清电价
-            dataList.append(unitData[i]["realTimeClearingPrice"])
-            # 实际计量电力
-            dataList.append(unitData[i]["actualMeasuredPower"])
+                d = d[i]
+
+                for node in info['node']:
+                    d = d[node]
+
+                dataList.append(d)
+
+            saveFileName = unitName + "-"+ templateInfo['saveFileName']  + dateStr2 + ".xlsx"
+            savePath = mkDir(rootSavePath, *templateInfo['savePath'],ownerName, dateStr1)
+
+            path = os.path.join(savePath, saveFileName)
 
             sd += datetime.timedelta(days=1)
+            print(saveFileName)
+            print(path)
 
-            e.writeColData(sheetName="Sheet1", colList=colList, dataList=dataList)
-            e.saveFile(saveFilePath)
-
-            # saveFile(openFilePath,colList,dataList,saveFilePath)
+            e.writeColData(sheetName="Sheet1", colList=templateInfo['colList'],
+                           beginRowList=templateInfo['beginRowList'], dataList=dataList,
+                           savePath=path)
     e.close()
 
 
-def execPublic(session, yamlData, startDate, endDate):
+def execPublic(session, yamlPublicData, startDate, endDate):
 
-    mkPublicDir(publicSavePath,startDate, endDate)
+    data = {}
 
-    responseData = getPublicData(session, yamlData['publicData'], startDate, endDate)
+    requestInfo = yamlPublicData
 
-    a = [
-        ['clearingPrice', None, None, '日分解及出清结果数据.xlsx', [9, 10, 11], True],
-        ['loadList', 'dayAheadLoad', 'rtLoad', '统调负荷预测及实测.xlsx', [3, 4, 5, 6], False],
-        ['newEnergyAll', 'dayAheadNewEnergyLoad', 'rtNewEnergyLoad', '新能源出力预测及实测 全网新能源.xlsx', [3, 4, 5, 6], False],
-        ['newEnergySun', 'dayAheadNewEnergyLoad', 'rtNewEnergyLoad', '新能源出力预测及实测 全网光伏.xlsx', [3, 4, 5, 6], False],
-        ['newEnergyWind', 'dayAheadNewEnergyLoad', 'rtNewEnergyLoad', '新能源出力预测及实测 全网风电.xlsx', [3, 4, 5, 6], False],
-        ['eastTransPlan', 'eastTransForecast', 'eastTransReal', '东送计划预测及实际.xlsx', [3, 4, 5, 6], False],
-        ['noMarketPlan', 'nonMarketPlanForecast', 'nonMarketPlanReal', '非市场出力计划及实测.xlsx', [3, 4, 5, 6], False]
-    ]
+    data.update(getMarketData(session, requestInfo, startDate, endDate))
+    data.update(getOverhaulData(session, requestInfo, startDate, endDate))
 
-    for i in a:
-        outPublicData(responseData, startDate, endDate, i[0], i[1], i[2], i[3], i[4], i[5])
+    for item in publicConfig:
+
+        outPublicData(data,startDate,endDate,item)
+
+    # print(data)
 
 
-def execPrivate(session, yamlData, startDate, endDate):
-    unitInfo = getUnitId(session, yamlData['privateData'])
+def execPrivate(session, yamlPrivateData, startDate, endDate):
 
-    # 创建文件夹
-    mkPrivateDir(privateSavePath,unitInfo,startDate, endDate)
+    unitInfo = getUnitId(session, yamlPrivateData)
 
-    unitData = getPrivateData(session, yamlData['privateData'], startDate, endDate ,unitInfo)
-    outPrivateData(unitData,startDate,endDate)
+    unitData = getPrivateData(session, yamlPrivateData, startDate, endDate ,unitInfo)
+
+    # print(unitData)
+    for item in privateFileConfig:
+
+        outPrivateData(unitData,startDate,endDate,item)
 
 def beginCrawl(startDate,endDate,type):
-
     session = requests.Session()
     yamlData = readYaml(yamlFilePath)
-    login(session,yamlData['login'])
+    login(session, yamlData['login'])
 
 
     startTime = datetime.datetime.now()
-    print(startDate,endDate,type)
-
+    print(startDate, endDate, type)
 
 
     # 公有和私有
     if type ==  0:
-        execPublic(session, yamlData, startDate, endDate)
-        execPrivate(session, yamlData, startDate, endDate)
+        execPublic(session, yamlData['publicData'], startDate, endDate)
+        execPrivate(session, yamlData['privateData'], startDate, endDate)
     # 公有
     elif type ==  1:
-        execPublic(session, yamlData, startDate, endDate)
+        execPublic(session, yamlData['publicData'], startDate, endDate)
     # 私有
     elif type == 2:
-        execPrivate(session, yamlData, startDate, endDate)
+        execPrivate(session, yamlData['privateData'], startDate, endDate)
 
     endTime = datetime.datetime.now()
 
@@ -262,4 +351,25 @@ def beginCrawl(startDate,endDate,type):
 
 
 if __name__ == '__main__':
-    beginCrawl('2022-12-01','2022-12-01',1)
+    # beginCrawl('2022-12-01','2022-12-01',1)
+
+    # 哪个模板
+    # 哪些数据项  ，用list存储
+    # 在数据哪个层级 ，用list存储
+    # 保存在第几列，第几行
+    # 哪个保存名
+
+    session = requests.Session()
+    yamlData = readYaml(yamlFilePath)
+    login(session,yamlData['login'])
+
+    startDate = '2022-11-28'
+    endDate = '2022-11-28'
+    #
+    # startTime = datetime.datetime.now()
+    # print(startDate,endDate,type)
+
+    beginCrawl(startDate,endDate,0)
+
+
+
