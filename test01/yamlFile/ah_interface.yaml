@@ -1,0 +1,35 @@
+login:
+    method: GET
+    publicKeyUrl: https://xhxt.chng.com.cn/usercenter/web/pf/login/info/publicKey
+    loginUrl: https://xhxt.chng.com.cn/usercenter/web/login
+    switchTenantUrl: https://xhxt.chng.com.cn/usercenter/web/switchTenant
+    tenantId : e4f8c059825cddf50185299b1fde25ec
+    username: zhanzw
+    password: huaneng123@
+    loginMode: 2
+publicData:
+    method: GET
+    marketurl: https://xhxt.chng.com.cn/ahgroup/fire/api/market/analysis/ah/market/info
+    clearingPriceUrl: https://xhxt.chng.com.cn/ahgroup/fire/api/data/public/common
+    standbyUrl: https://xhxt.chng.com.cn/ahgroup/fire/api/data/public/common
+    overhaulUrl: https://xhxt.chng.com.cn/ahgroup/fire/api/data/overhaul/query
+privateData:
+    unitIdUrl: https://xhxt.chng.com.cn/ahgroup/fire/api/org/org/tree
+    clearingUrl: https://xhxt.chng.com.cn/ahgroup/fire/api/spot/result/mult
+
+importInfo:
+  login:
+    method: GET
+    publicKeyUrl:
+    loginUrl: https://adssx-test-gzdevops3.tsintergy.com/usercenter/web/login
+    switchTenantUrl: https://adssx-test-gzdevops3.tsintergy.com/usercenter/web/switchTenant
+    tenantId : 8280818779cb82450179cb8422a30000
+    username: zhanzw
+    password: passwd123@
+    loginMode: 2
+  predictDataUrl: https://adssx-test-gzdevops3.tsintergy.com/datacenter/ah/api/data/import/create/multi
+  realDataUrl: https://adssx-test-gzdevops3.tsintergy.com/datacenter/ah/api/data/import/create/multi
+  priceDataUrl: https://adssx-test-gzdevops3.tsintergy.com/datacenter/ah/api/data/import/create/multi
+
+
+

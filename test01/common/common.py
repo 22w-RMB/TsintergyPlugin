@@ -1,6 +1,7 @@
 
 import base64
 
+import numpy
 import yaml
 from Crypto.Cipher import PKCS1_v1_5
 from Crypto.PublicKey import RSA
@@ -70,7 +71,27 @@ def mkPrivateDir(privateSavePath,unitData,startDate, endDate):
 
         mkDateDir(ownerPath,startDate, endDate)
 
+def trun24(dataList, turnLen=24):
 
+    if len(dataList) != 96:
+        print("数据长度不为96")
+        return
+    list24 = []
+
+    for i in range(0,turnLen):
+
+        if dataList[i*4] is None:
+            list24.append(None)
+            continue
+        #
+        # print(dataList[(i * 4):(i * 4 + 4)])
+
+        list24.append(
+
+            numpy.mean( dataList[ (i*3):(i*3+4) ] )
+        )
+
+    return list24
 
 # def saveFile(openFilePath, colList, dataList, saveFilePath ):
 #     e = ExcelHepler(openFilePath)
@@ -108,6 +129,8 @@ def login(session1 : requests.Session, loginInfo):
 
 
 
+
+
 rootPath = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -116,5 +139,5 @@ if __name__ == '__main__':
 
     print(rootPath)
 
-
+    print(trun24([1, 2, 3, 4, 5, 6, 7, 8,None,5,8,9], turnLen=3))
     pass
