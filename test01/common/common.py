@@ -11,8 +11,6 @@ import datetime
 
 
 
-
-
 # RSA 加密
 def encrpt(s , key):
     public_key = "-----BEGIN PUBLIC KEY-----\n" + key + "\n-----END PUBLIC KEY-----"
@@ -125,8 +123,6 @@ def login(session1 : requests.Session, loginInfo):
     }
     r2 = session1.request(method="GET",url=loginInfo['switchTenantUrl'],params=switchTenantData)
     print(r2.json())
-
-
 
 
 

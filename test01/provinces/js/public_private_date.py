@@ -1,6 +1,6 @@
 from test01.common.common import *
 from test01.common.excel_helper import ExcelHepler
-from jsFileConfig import *
+from test01.provinces.js.jsFileConfig import *
 
 province = "江苏"
 provinceAreaId = "032"

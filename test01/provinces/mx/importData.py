@@ -1,6 +1,6 @@
 import json
 
-from public_private_date import *
+from test01.provinces.mx.public_private_date import *
 import requests
 
 

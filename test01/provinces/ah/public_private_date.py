@@ -2,7 +2,7 @@ import json
 
 from test01.common.common import *
 from test01.common.excel_helper import ExcelHepler
-from ahFileConfig import *
+from test01.provinces.ah.ahFileConfig import *
 
 province = "安徽"
 provinceAreaId = "034"
@@ -219,17 +219,17 @@ def outPublicData(data, startDate, endDate,  templateInfo):
         saveFilePath = mkDir(rootSavePath, *templateInfo['savePath'], dateStr1)
 
         path = os.path.join(saveFilePath, saveFileName)
-        print(saveFileName)
+        # print(saveFileName)
         print(path)
 
 
         for info in templateInfo['typeInfo']:
-            print(info)
+            # print(info)
             d = data
-            print(d)
+            # print(d)
             if info['board'] is not None:
                 for board in info['board']:
-                    print(board)
+                    # print(board)
                     d = d[board]
 
             d = d[i]

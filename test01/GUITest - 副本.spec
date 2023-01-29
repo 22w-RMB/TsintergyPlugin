@@ -5,7 +5,7 @@ block_cipher = None
 
 
 a = Analysis(
-    ['D:\\code\\pyhton\\plugin\\test01\\GUITest.py',
+    ['GUITest.py',
 	'D:\\code\\pyhton\\plugin\\test01\\common\\common.py',
 	'D:\\code\\pyhton\\plugin\\test01\\common\\excel_helper.py',
 	'D:\\code\\pyhton\\plugin\\test01\\provinces\\ah\\ahFileConfig.py',
@@ -18,7 +18,7 @@ a = Analysis(
 	'D:\\code\\pyhton\\plugin\\test01\\provinces\\mx\\importData.py',
 	'D:\\code\\pyhton\\plugin\\test01\\provinces\\mx\\public_private_date.py'
 	],
-    pathex=['D:\\code\\pyhton\\plugin'],
+    pathex=['D:\\code\\pyhton\\plugin\\test01'],
     binaries=[],
     datas=[('.\\template','template'),('.\\yamlFile','yamlFile')],
     hiddenimports=[],

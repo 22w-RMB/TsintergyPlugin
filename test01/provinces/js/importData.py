@@ -229,4 +229,4 @@ def beginImport(startDate,endDate):
 
 if __name__ == '__main__':
     print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    beginImport('2022-11-15','2022-11-15')
+    beginImport('2022-12-01','2022-12-01')
