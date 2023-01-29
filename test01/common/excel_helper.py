@@ -15,6 +15,19 @@ class ExcelHepler:
 
         pass
 
+    def getTemplateStyle(self, sheetName="Sheet1"):
+
+        return self.wb.sheets[sheetName].range("A1").expand().value
+
+    def newExcel(self, sheetName="Sheet1", templateStyle=None):
+
+        self.wb = self.app.books.add()
+
+        if sheetName != "Sheet1":
+            self.wb.sheets.add(sheetName)
+
+        self.wb.sheets[sheetName].range("A1").options(expand="table").value = templateStyle
+
     def writeColData(self,colList,dataList,beginRowList,savePath,sheetName="Sheet1"):
         if len(colList) != len(dataList):
             print("输入的列数组和数据数组不一致！！！！")
