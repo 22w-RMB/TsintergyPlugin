@@ -1,5 +1,6 @@
 from common.common import *
 from common.excel_helper import ExcelHepler
+from provinces.ah.ahFileConfig import *
 
 province = "安徽"
 provinceAreaId = "034"

@@ -1,5 +1,6 @@
 from common.common import *
 from common.excel_helper import ExcelHepler
+from provinces.mx.mxFileConfig import *
 
 province = "蒙西"
 provinceAreaId = "015"
