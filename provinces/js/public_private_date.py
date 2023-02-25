@@ -289,9 +289,15 @@ def outPrivateData(data, startDate, endDate,  templateInfo):
             print(saveFileName)
             print(path)
 
+            startTime = datetime.datetime.now()
+
             e.writeColData(sheetName="Sheet1", colList=templateInfo['colList'],
                            beginRowList=templateInfo['beginRowList'], dataList=dataList,
                            savePath=path)
+
+            endTime = datetime.datetime.now()
+            print("输出文件耗时:  ",endTime-startTime)
+
     e.close()
 
 
@@ -369,8 +375,12 @@ if __name__ == '__main__':
     startDate = '2022-11-15'
     endDate = '2022-11-15'
     #
-    # startTime = datetime.datetime.now()
+    startTime = datetime.datetime.now()
     # print(startDate,endDate,type)
 
-    beginCrawl(startDate,endDate,1)
+    beginCrawl(startDate,endDate,2)
+
+    endTime = datetime.datetime.now()
+
+    print("总耗时：  ",endTime-startTime)
 

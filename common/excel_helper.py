@@ -34,15 +34,19 @@ class ExcelHepler:
             return
 
         ws = self.wb.sheets[sheetName]
+
+
         for i in range(0,len(colList)):
 
             row = beginRowList[i]
             col = colList[i]
             if len(dataList[i]) == 0:
                 continue
-            for data in dataList[i]:
-                ws.range(row,col).value = data
-                row += 1
+            # for data in dataList[i]:
+            #     ws.range(row,col).value = data
+            #     row += 1
+            ws.range((row,col),(row+1000,col)).value = [[j] for j in dataList[i] ]
+
 
         self.saveFile(savePath)
 
